@@ -1,11 +1,26 @@
 import Axios from "axios";
 import { TodoCreate } from "../view-models/todo-create.view-model";
 import { TodoUpdate } from "../view-models/todo-update.view-model";
+import { TodoSearch } from "../view-models/todo-search.view-model";
 import Todo from "../models/todo.model";
 
 export const getTodos = async (idToken: string) => {
   const response = await Axios.get(
     `${process.env.REACT_APP_API_ENDPOINT}/todos`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${idToken}`,
+      },
+    }
+  );
+  return response.data.items;
+};
+
+export const searchTodos = async (idToken: string, keyword: string) => {
+  const response = await Axios.post(
+    `${process.env.REACT_APP_API_ENDPOINT}/search`,
+    JSON.stringify({keyword: keyword}),
     {
       headers: {
         "Content-Type": "application/json",

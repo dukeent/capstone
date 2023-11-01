@@ -82,4 +82,10 @@ export default class BusinessLogicLayer {
     const uploadUrl = await this.s3Attachment.getUploadUrl(attachmentId);
     return uploadUrl;
   }
+
+  async search(userId: string, keyword: string): Promise<Todo[]> {
+    logger.info(`Getting all todos for user: ${userId}`);
+
+    return this.dataAccessLayer.search(userId, keyword);
+  }
 }

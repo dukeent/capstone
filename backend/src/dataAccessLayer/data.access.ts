@@ -19,7 +19,6 @@ export default class DataAccessLayer {
     const result = await this.client
       .query(param)
       .promise();
-      
     return result.Items as Todo[];
   }
 
@@ -114,5 +113,31 @@ export default class DataAccessLayer {
       .delete(param)
       .promise();
     return result;
+  }
+
+  async search(userId: string, keyword: string): Promise<Todo[]> {
+    console.log("searching for keyword: ", keyword);
+    
+    const param = {
+      TableName: this.tableName,
+      KeyConditionExpression: "#userId = :userId",
+      FilterExpression: "contains(#name, :keyword)",
+      ExpressionAttributeNames: {
+        "#userId": "userId",
+        "#name": "name",
+      },
+      ExpressionAttributeValues: {
+        ":userId": userId,
+        ":keyword": keyword,
+      },
+    };
+
+    const result = await this.client.query(param).promise();
+
+    // logger.info(
+    //   `Successfully retrieved Todos: ${result.Items} for user: ${userId}`
+    // );
+
+    return result.Items as Todo[];
   }
 }

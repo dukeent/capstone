@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom'
 import { deleteTodo, getTodos, patchTodo } from '../api/todos.api'
 import { NewTodoInput } from './NewTodoInput'
 import Todo from '../models/todo.model'
+import { SearchTodo } from './SearchTodoInput'
 
 export const Todos = () => {
 
@@ -154,8 +155,12 @@ export const Todos = () => {
     return (
         <div>
             <Header as="h1">TODOs</Header>
-
             <NewTodoInput onNewTodo={(newTodo: any) => setTodos([...todos, newTodo])} />
+            <SearchTodo onSearchTodo={(data: any) => {
+                console.log('Search Todo: ', data);
+                
+                setTodos(data);
+            }}/>
 
             {renderTodos()}
         </div>
