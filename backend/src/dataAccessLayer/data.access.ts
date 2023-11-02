@@ -1,11 +1,15 @@
 import Todo from "../models/todo";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { TodoUpdate } from "../requests/update-todo-request";
+import { createLogger } from "../utils/logger";
+
+const logger = createLogger("Data access");
 
 export default class DataAccessLayer {
   constructor(private client: DocumentClient, private tableName: string) { }
 
   async getAll(userId: string): Promise<Todo[]> {
+    logger.info(`Getting all todos for user: ${userId}`);
     const param = {
       TableName: this.tableName,
       KeyConditionExpression: "#userId = :userId",
@@ -23,6 +27,7 @@ export default class DataAccessLayer {
   }
 
   async getById(todoId: string, userId: string): Promise<Todo> {
+    logger.info(`Service: Getting Todo by ID: ${todoId} for userId: ${userId}`);
     const param = {
       TableName: this.tableName,
       Key: {
@@ -40,6 +45,7 @@ export default class DataAccessLayer {
   }
 
   async create(todo: Todo): Promise<Todo> {
+    logger.info(`Creating a new Todo`);
     const param = {
       TableName: this.tableName,
       Item: todo,
@@ -56,6 +62,8 @@ export default class DataAccessLayer {
     userId: string,
     updateTodo: Partial<TodoUpdate>
   ): Promise<Todo> {
+    logger.info(`Updating a Todo : ${todoId} for user: ${userId}`);
+
     const param = {
       TableName: this.tableName,
       Key: { todoId: todoId, userId: userId },
@@ -85,6 +93,8 @@ export default class DataAccessLayer {
     userId: string,
     attachmentUrl: string
   ) {
+    logger.info(`Updating Attachment URL: ${attachmentUrl} for Todo: ${todoId} for user with userId: ${userId}`);
+
     const param = {
       TableName: this.tableName,
       Key: {
@@ -117,7 +127,7 @@ export default class DataAccessLayer {
 
   async search(userId: string, keyword: string): Promise<Todo[]> {
     console.log("searching for keyword: ", keyword);
-    
+    logger.info(`Searching todos for user: ${userId} by keyword: ${keyword}`);
     const param = {
       TableName: this.tableName,
       KeyConditionExpression: "#userId = :userId",
@@ -133,11 +143,6 @@ export default class DataAccessLayer {
     };
 
     const result = await this.client.query(param).promise();
-
-    // logger.info(
-    //   `Successfully retrieved Todos: ${result.Items} for user: ${userId}`
-    // );
-
     return result.Items as Todo[];
   }
 }

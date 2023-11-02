@@ -84,7 +84,7 @@ export default class BusinessLogicLayer {
   }
 
   async search(userId: string, keyword: string): Promise<Todo[]> {
-    logger.info(`Getting all todos for user: ${userId}`);
+    logger.info(`Searching todos for user: ${userId} by keyword: ${keyword}`);
 
     return this.dataAccessLayer.search(userId, keyword);
   }
